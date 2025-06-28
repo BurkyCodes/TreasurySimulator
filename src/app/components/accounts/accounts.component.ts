@@ -26,6 +26,10 @@ export class AccountsComponent implements OnInit, OnDestroy {
   transferNote: string = '';
 
   showTransactionLogs = false;
+  filterAccount: string = '';
+  filterCurrency: string = '';
+  filteredTransactions: any[] = [];
+
 
   transactions$ = toObservable(transactionSignal);
 
@@ -63,7 +67,31 @@ export class AccountsComponent implements OnInit, OnDestroy {
         this.allAccounts = accounts;
         this.loadedAccounts = accounts;
       });
+    toObservable(transactionSignal)
+       .pipe(takeUntil(this.destroyed$))
+       .subscribe(transactions => {
+      this.applyTransactionFilters(transactions);
+    });
   }
+  applyTransactionFilters(transactions: any[]) {
+  this.filteredTransactions = transactions.filter(tx => {
+    const matchesAccount =
+      this.filterAccount === '' ||
+      tx.from.includes(this.filterAccount) ||
+      tx.to.includes(this.filterAccount);
+
+    const matchesCurrency =
+      this.filterCurrency === '' ||
+      tx.fromCurrency === this.filterCurrency ||
+      tx.toCurrency === this.filterCurrency;
+
+    return matchesAccount && matchesCurrency;
+  });
+}
+
+onTransactionFilterChange() {
+  this.applyTransactionFilters(transactionSignal());
+}
 
   searchAccounts(): void {
     const term = this.searchTerm.toLowerCase().trim();
@@ -78,7 +106,9 @@ export class AccountsComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+
+  }
 
   ngOnDestroy(): void {
     this.destroyed$.next();
