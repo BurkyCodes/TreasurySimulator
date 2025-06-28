@@ -93,6 +93,11 @@ onTransactionFilterChange() {
   this.applyTransactionFilters(transactionSignal());
 }
 
+resetFilters() {
+  this.filterAccount = '';
+  this.filterCurrency = '';
+  this.applyTransactionFilters(transactionSignal());
+}
   searchAccounts(): void {
     const term = this.searchTerm.toLowerCase().trim();
 

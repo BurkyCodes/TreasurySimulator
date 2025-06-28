@@ -78,7 +78,7 @@ class="fixed inset-0 flex overflow-y-auto items-start pt-20 justify-center w-scr
   <div class="mb-2">
     <label class="font-semibold">To:</label>
     <select [(ngModel)]="destinationId" class="w-full border px-3 py-2 rounded">
-      <option value="">-- Select Destination --</option>
+      <option value="">Send to </option>
       <option *ngFor="let acc of allAccounts" 
               [value]="acc.id"
               [disabled]="acc.id === selectedAccount.id">
@@ -107,7 +107,7 @@ class="fixed inset-0 flex overflow-y-auto items-start pt-20 justify-center w-scr
 
 <div
  *ngIf="showTransactionLogs"
- class="fixed inset-0 px-4 cursor-pointer flex overflow-y-auto items-start pt-20 justify-center w-screen h-screen bg-black/70 backdrop-blur-md z-50"
+ class="fixed inset-0 px-4 cursor-pointer flex overflow-y-auto items-start pt-20 justify-center w-screen h-screen bg-black/80 backdrop-blur-md z-50"
 >
  <i 
  (click)="showTransactionLogs = !showTransactionLogs"
@@ -125,7 +125,7 @@ class="fixed inset-0 flex overflow-y-auto items-start pt-20 justify-center w-scr
       <select
         [(ngModel)]="filterCurrency"
         (change)="onTransactionFilterChange()"
-        class="px-2 py-1 text-[#fff] rounded text-black"
+        class="px-2 py-1 text-[#fff] border border-[#fff] rounded text-black"
       >
         <option value="" class="text-[#fff]">All Currencies</option>
         <option value="KES">KES</option>
@@ -133,7 +133,22 @@ class="fixed inset-0 flex overflow-y-auto items-start pt-20 justify-center w-scr
         <option value="NGN">NGN</option>
       </select>
     </div>
-  <table class="border w-full border-collapse text-left">
+    <div class="w-full flex items-center justify-center my-4 gap-5">
+        <button
+        (click)="onTransactionFilterChange()"
+        class="bg-[#fff] text-teal-800 font-bold border border-white px-4 py-1 rounded"
+      >
+        Filter
+      </button>
+
+      <button
+        (click)="resetFilters()"
+        class="border border-[#fff] text-[#fff] px-4 py-1 rounded"
+      >
+        Reset
+      </button>
+      </div>
+  <table *ngIf="filteredTransactions.length > 0" class="border w-full border-collapse text-left">
     <thead class="bg-teal-100">
       <tr>
         <th class="p-2 border">From</th>
@@ -144,7 +159,7 @@ class="fixed inset-0 flex overflow-y-auto items-start pt-20 justify-center w-scr
       </tr>
     </thead>
     <tbody class="text-[#fff]">
-      <tr *ngFor="let tx of transactions$ | async" >
+      <tr *ngFor="let tx of filteredTransactions" >
         <td class="p-2 border">{{ tx.from }}</td>
         <td class="p-2 border">{{ tx.to }}</td>
         <td class="p-2 border">{{ tx.amount }}</td>
@@ -153,6 +168,9 @@ class="fixed inset-0 flex overflow-y-auto items-start pt-20 justify-center w-scr
       </tr>
     </tbody>
   </table>
+     <p *ngIf="filteredTransactions.length === 0" class="text-center mt-2 text-xl capitalize text-[#fff] mt-6">
+      No transactions.
+    </p>
 </div>
 
 </div>
